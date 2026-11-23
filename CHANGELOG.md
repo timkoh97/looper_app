@@ -15,27 +15,32 @@ Planned work, roughly in priority order. Move items into a release section when 
   - offline mode works after **⚙ → Download for offline**, including in airplane mode
 - **Fixes from device testing:** fix any problems found in the tests above.
 - **iOS fallback, only if needed:** if iOS won't play several pads at once, switch the iOS version to load pads fully into memory instead of streaming them.
-- **visual updates**
-- **bug fixes**
-- **my own generated pads**
-- **different versions of pads e.g. warm, shimmery**
+- **Visual updates**
+- **Bug fixes**
+- **My own generated pads**
+- **Different versions of pads, e.g. warm, shimmery**
 
 ### Known limitations
 
 - **Untested on phones:** so far it has only been tested in desktop Edge.
 - **Background playback:** on iPhone, and on Android with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this.
 - **Volume dip at the loop point:** a few pads differ by up to about 1.7 dB between their start and end. The 8-second loop crossfade should smooth this over.
+- **Other dark modes:** Samsung Internet's own dark mode and dark-mode browser extensions (such as Dark Reader) may still recolour the page.
 
 ## [Unreleased]
 
-### Changed
+Nothing yet.
 
-- **Landscape layout:** the volume slider now has its own column running the full height of the screen. STOP (top) and the stereo/mono toggle (bottom) have moved to a column at the screen edge. Portrait is unchanged.
-- **App icon redesigned:** it now shows the keys C to E (C, C♯, D, D♯, E) with D lit gold, centred on a dark background.
+## [0.2.0] – 2026-11-23
 
 ### Added
 
 - **iPhone home-screen icon:** a new square 180 px icon with no rounded corners and no see-through areas, because iOS adds its own rounded corners.
+
+### Changed
+
+- **Landscape layout:** the volume slider now has its own column running the full height of the screen. STOP (top) and the stereo/mono toggle (bottom) have moved to a column at the screen edge. Portrait is unchanged.
+- **App icon redesigned:** it now shows the keys C to E (C, C♯, D, D♯, E) with D lit gold, centred on a dark background. If you added Pad Looper to your home screen before this version, remove it and add it again to get the new icon.
 
 ### Fixed
 
