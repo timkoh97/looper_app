@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Pad Looper icon: flat mini keyboard with one gold (active) key -->
+  <rect width="512" height="512" rx="96" fill="#0f1115"/>
+  <rect x="96"  y="128" width="64" height="256" rx="6" fill="#f4f4f2"/>
+  <rect x="176" y="128" width="64" height="256" rx="6" fill="#f5b942"/>
+  <rect x="256" y="128" width="64" height="256" rx="6" fill="#f4f4f2"/>
+  <rect x="336" y="128" width="64" height="256" rx="6" fill="#f4f4f2"/>
+  <rect x="148" y="128" width="40" height="150" rx="4" fill="#1c1f26"/>
+  <rect x="308" y="128" width="40" height="150" rx="4" fill="#1c1f26"/>
+</svg>

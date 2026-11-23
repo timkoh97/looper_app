@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Pad Looper: worship pad player. 12 keys, looping pads, crossfades, offline-capable. -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f1115">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pad Looper">
+  <meta name="description" content="Looping worship pads in all 12 keys, with crossfades.">
+  <title>Pad Looper</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <h1 class="app-title">Pad <span>Looper</span></h1>
+      <div class="topbar-right">
+        <span id="now-playing" class="now-playing" title="Now playing">—</span>
+        <button id="settings-button" class="settings-button" aria-label="Settings">
+          ⚙ <span class="long-label">Crossfade </span><span id="settings-crossfade-label">4 s</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div id="keyboard" class="keyboard" aria-label="Keys"></div>
+
+      <aside class="side">
+        <button id="panic" class="panic" aria-label="Stop all sound">STOP</button>
+        <div class="volume">
+          <small>Vol</small>
+          <div id="volume-slider" class="v-slider" role="slider" tabindex="0" aria-label="Volume"
+               aria-valuemin="0" aria-valuemax="100" aria-orientation="vertical">
+            <div class="v-slider-fill"></div>
+            <div class="v-slider-thumb"></div>
+          </div>
+          <span id="volume-label" class="volume-label">75%</span>
+        </div>
+        <button id="output-toggle" class="output-toggle" data-mode="stereo">
+          <span class="dots"><i></i><i></i></span>
+          <span class="mode-label">STEREO</span>
+        </button>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form method="dialog">
+      <header class="dialog-header">
+        <h2>Settings</h2>
+        <button class="close-button" aria-label="Close">✕</button>
+      </header>
+
+      <section>
+        <label for="crossfade-input">Crossfade <output id="crossfade-value">4 s</output></label>
+        <input id="crossfade-input" type="range" min="0" max="20" step="0.5" value="4">
+        <p class="hint">Also used when starting from silence and fading out.</p>
+      </section>
+
+      <section>
+        <h3>Offline</h3>
+        <p id="offline-status" class="hint">Checking…</p>
+        <button id="offline-button" type="button" class="primary-button">Download for offline</button>
+        <progress id="offline-progress" max="1" value="0" hidden></progress>
+        <p class="hint">Tip: add Pad Looper to your home screen so saved pads aren't cleared by the browser.</p>
+      </section>
+
+      <section>
+        <h3>Credits</h3>
+        <p class="hint">Pads by <a href="https://pixabay.com/users/arisen_worship-49256057" target="_blank" rel="noopener">Arisen Worship</a> on Pixabay. Thank you!</p>
+      </section>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
