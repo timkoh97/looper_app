@@ -15,6 +15,10 @@ Planned work, roughly in priority order. Move items into a release section when 
   - offline mode works after **⚙ → Download for offline**, including in airplane mode
 - **Fixes from device testing:** fix any problems found in the tests above.
 - **iOS fallback, only if needed:** if iOS won't play several pads at once, switch the iOS version to load pads fully into memory instead of streaming them.
+- **visual updates**
+- **bug fixes**
+- **my own generated pads**
+- **different versions of pads e.g. warm, shimmery**
 
 ### Known limitations
 
