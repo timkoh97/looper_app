@@ -9,12 +9,13 @@ Planned work, roughly in priority order. Move items into a release section when 
 
 ### Planned
 
-- **Real-device testing** on iPhone (Safari) and Android (Chrome):
-  - crossfades and the loop join at the 5-minute mark sound smooth
-  - audio keeps playing with the screen locked, and on iPhone with the silent switch on
-  - offline mode works after **⚙ → Download for offline**, including in airplane mode
+- **Remaining device testing:**
+  - iPhone (Safari): crossfades and lock-screen playback both work (tested 2026-11-23). Still to check:
+    - the loop join at the 5-minute mark
+    - playing with the silent switch on
+    - offline mode after **⚙ → Download for offline**, including in airplane mode
+  - Android (Chrome): not tested yet. Check crossfades, the loop join, lock-screen playback and offline mode.
 - **Fixes from device testing:** fix any problems found in the tests above.
-- **iOS fallback, only if needed:** if iOS won't play several pads at once, switch the iOS version to load pads fully into memory instead of streaming them.
 - **Visual updates**
 - **Bug fixes**
 - **My own generated pads**
@@ -22,8 +23,8 @@ Planned work, roughly in priority order. Move items into a release section when 
 
 ### Known limitations
 
-- **Untested on phones:** so far it has only been tested in desktop Edge.
-- **Background playback:** on iPhone, and on Android with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this.
+- **Partly tested on phones:** tested on iPhone (Safari) and desktop Edge only. The loop join hasn't yet been heard on a real device.
+- **Background playback on Android:** with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this. (It works on iPhone.)
 - **Volume dip at the loop point:** a few pads differ by up to about 1.7 dB between their start and end. The 8-second loop crossfade should smooth this over.
 - **Other dark modes:** Samsung Internet's own dark mode and dark-mode browser extensions (such as Dark Reader) may still recolour the page.
 
