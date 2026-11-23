@@ -32,6 +32,16 @@ Planned work, roughly in priority order. Move items into a release section when 
 
 Nothing yet.
 
+## [0.2.1] – 2026-11-23
+
+### Added
+
+- **Licence:** Pad Looper's code, design, icons and docs are now © 2026 Tim Koh under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Anyone can use, share and adapt it with credit, adaptations must use the same licence, and it can't be sold. The pad audio isn't covered; it stays under the Pixabay Content License. The licence is in `LICENSE`, the README and ⚙ settings → Credits.
+
+### Changed
+
+- **README:** added a link to the live app, the landscape layout, steps for updating the icon, and `icons/`, `LICENSE` and `CHANGELOG.md` in the project layout.
+
 ## [0.2.0] – 2026-11-23
 
 ### Added
