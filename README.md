@@ -17,9 +17,9 @@ A web/mobile worship pad player, hosted on GitHub Pages. Tap a key (C–B) to pl
 
 Pads by **[Arisen Worship](https://pixabay.com/users/arisen_worship-49256057)** on Pixabay. Thank you!
 
-## Pad audio not included (yet)
+## Licence for the pad audio
 
-The pad MP3s are **not committed** to this repo (`pads/*.mp3` is in `.gitignore`). Pixabay's licence doesn't allow redistributing content "on a Standalone basis", and lightly trimmed files likely count as that. Permission from the artist is being sought. Until then, the live site has no audio, so run it locally with the files in `pads/`.
+The pads in `pads/` are used under the [Pixabay Content License](https://pixabay.com/service/license-summary/) as part of this app. They are not offered for separate download or redistribution. All rights in the recordings remain with Arisen Worship.
 
 ## Adding or replacing a pad
 
