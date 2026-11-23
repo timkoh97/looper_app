@@ -15,7 +15,6 @@
   --white-key: #f4f4f2;
   --black-key: #1c1f26;
   --danger: #e5484d;
-  --side-width: 110px;
 }
 
 * { box-sizing: border-box; }
@@ -73,10 +72,15 @@ button { font: inherit; color: inherit; }
 }
 .key-label { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
 .key-label .sep { display: none; }
-.white { flex: 1; background: var(--white-key); color: #333; border-right: 1px solid #bbb; }
+/* --key-rest / --key-rest-text: the key's normal look, also used by the fading pulse */
+.white {
+  --key-rest: var(--white-key); --key-rest-text: #333;
+  flex: 1; background: var(--key-rest); color: var(--key-rest-text); border-right: 1px solid #bbb;
+}
 .white:last-child { border-right: none; }
 .black {
-  position: absolute; z-index: 2; background: var(--black-key); color: #ddd; font-size: 11px;
+  --key-rest: var(--black-key); --key-rest-text: #ddd;
+  position: absolute; z-index: 2; background: var(--key-rest); color: var(--key-rest-text); font-size: 11px;
   top: 0; height: 60%; width: 8%; left: calc(var(--pos) * 100% / 7 - 4%);
   border-radius: 0 0 3px 3px;
 }
@@ -85,11 +89,28 @@ button { font: inherit; color: inherit; }
 .black.unavailable { background: #3a3e48; color: #777; }
 
 .key.active { background: var(--accent); color: #000; }
-.key.fading { background: var(--accent-dim); color: #000; animation: fade-pulse .8s ease-in-out infinite alternate; }
-@keyframes fade-pulse { to { opacity: .55; } }
+/* Outgoing key pulses between dim gold and its normal look (opaque, so nothing shows through) */
+.key.fading { animation: fade-pulse .8s ease-in-out infinite alternate; }
+@keyframes fade-pulse {
+  from { background-color: var(--accent-dim); color: #000; }
+  to   { background-color: var(--key-rest); color: var(--key-rest-text); }
+}
 
-/* ---------- Side panel: STOP → volume → output ---------- */
-.side { width: var(--side-width); display: flex; flex-direction: column; gap: 12px; }
+/* ---------- Side panel ----------
+ * Landscape: volume slider gets the full height; STOP (top) and output toggle (bottom) sit at the screen edge.
+ * Portrait (see media query): single column STOP → volume → output. */
+.side {
+  display: grid; gap: 12px;
+  grid-template-columns: 76px 104px;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "volume panic"
+    "volume ."
+    "volume output";
+}
+.side .panic { grid-area: panic; }
+.side .volume { grid-area: volume; }
+.side .output-toggle { grid-area: output; }
 .panic {
   height: 72px; border: none; border-radius: 12px; cursor: pointer;
   background: var(--danger); color: #fff; font-weight: 800; letter-spacing: 1px; font-size: 15px;
@@ -133,7 +154,7 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Portrait: keyboard rotated 90° anticlockwise ---------- */
 @media (orientation: portrait) {
-  :root { --side-width: 88px; }
+  .side { display: flex; flex-direction: column; width: 88px; }
   .settings-button .long-label { display: none; }
   .keyboard { flex-direction: column-reverse; }
   .white {

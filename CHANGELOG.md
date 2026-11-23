@@ -26,6 +26,16 @@ Planned work, roughly in priority order. Move items into a release section when 
 - **Background playback:** on iPhone, and on Android with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this.
 - **Volume dip at the loop point:** a few pads differ by up to about 1.7 dB between their start and end. The 8-second loop crossfade should smooth this over.
 
+## [Unreleased]
+
+### Changed
+
+- **Landscape layout:** the volume slider now has its own column running the full height of the screen. STOP (top) and the stereo/mono toggle (bottom) have moved to a column at the screen edge. Portrait is unchanged.
+
+### Fixed
+
+- **Fading keys:** they now pulse between dim gold and their normal colour. Before, they faded to transparent, which let the white key show through a fading black key.
+
 ## [0.1.0] – 2026-11-23
 
 First release.
