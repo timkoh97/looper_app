@@ -5,6 +5,7 @@
  */
 
 :root {
+  color-scheme: dark; /* page is dark by design; stops browser auto-dark from inverting colours */
   --bg: #0f1115;
   --panel: #181b22;
   --border: #2a2e39;

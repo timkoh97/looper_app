@@ -40,6 +40,7 @@ Planned work, roughly in priority order. Move items into a release section when 
 ### Fixed
 
 - **Fading keys:** they now pulse between dim gold and their normal colour. Before, they faded to transparent, which let the white key show through a fading black key.
+- **Dark mode:** the browser's automatic dark mode (for example, Chrome on Android) no longer turns the white keys black. The page now tells the browser it's already dark (`color-scheme: dark`).
 - **App icon:** the 192 px icon (used for Android installs, and previously for the iPhone home screen) was broken, showing a white background and only the left edge of the icon. It's now made by shrinking the 512 px version.
 
 ## [0.1.0] – 2026-11-23
