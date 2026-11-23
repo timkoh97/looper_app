@@ -31,10 +31,16 @@ Planned work, roughly in priority order. Move items into a release section when 
 ### Changed
 
 - **Landscape layout:** the volume slider now has its own column running the full height of the screen. STOP (top) and the stereo/mono toggle (bottom) have moved to a column at the screen edge. Portrait is unchanged.
+- **App icon redesigned:** it now shows the keys C to E (C, C♯, D, D♯, E) with D lit gold, centred on a dark background.
+
+### Added
+
+- **iPhone home-screen icon:** a new square 180 px icon with no rounded corners and no see-through areas, because iOS adds its own rounded corners.
 
 ### Fixed
 
 - **Fading keys:** they now pulse between dim gold and their normal colour. Before, they faded to transparent, which let the white key show through a fading black key.
+- **App icon:** the 192 px icon (used for Android installs, and previously for the iPhone home screen) was broken, showing a white background and only the left edge of the icon. It's now made by shrinking the 512 px version.
 
 ## [0.1.0] – 2026-11-23
 
