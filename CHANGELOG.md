@@ -80,3 +80,8 @@ First release.
 - **Phone features:** keeps the screen awake while playing, shows lock-screen controls, and on iPhone plays even with the silent switch on.
 - **Pads:** 12 pads by [Arisen Worship](https://pixabay.com/users/arisen_worship-49256057), used under the Pixabay Content License. Each is a 5-minute fade-free section (1:00–6:00 of the original), cut without re-encoding, and the app evens out their loudness.
 - **Design:** flat, with no shadows or glows.
+
+[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/timkoh97/looper_app/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/timkoh97/looper_app/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/timkoh97/looper_app/releases/tag/v0.1.0
