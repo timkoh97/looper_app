@@ -22,42 +22,53 @@ const MIN_FADE_SEC = 0.03;          // a 0 s crossfade still gets a tiny fade to
 const OUTPUT_SWITCH_SEC = 0.05;
 const VOLUME_SMOOTHING_SEC = 0.03;
 const MONO_GAIN = Math.SQRT2;       // offsets the ~3 dB drop when summing wide (uncorrelated) stereo to mono
-const KEY_CHANGE_DIP_GAIN = 10 ** (-10 / 20); // output at the midpoint of a key-change crossfade (−10 dB)
+// Dip stage gain at the midpoint of a key-change crossfade. The S-curve fades add −3 dB there
+// (two pads at half amplitude), so the total output dips to −16 dB.
+const KEY_CHANGE_DIP_GAIN = 10 ** (-13 / 20);
 
-/** Equal-power curve from `from` to `to`; keeps perceived loudness steady during a crossfade. */
-function equalPowerCurve(from, to, durationSec) {
-  const pointCount = Math.max(2, Math.ceil(durationSec * 60));
-  const curve = new Float32Array(pointCount);
-  const isRising = to > from;
-  for (let i = 0; i < pointCount; i++) {
-    const t = i / (pointCount - 1);
-    const shape = isRising ? Math.sin(t * Math.PI / 2) : 1 - Math.cos(t * Math.PI / 2);
-    curve[i] = from + (to - from) * shape;
-  }
-  return curve;
+/** Raised cosine (half a sine from −π/2 to π/2): 0 → 1 with zero slope at both ends. */
+const sCurve = t => (1 - Math.cos(t * Math.PI)) / 2;
+
+/**
+ * Fade shapes, as progress 0 → 1 over time t 0 → 1.
+ * equalPower: quarter sine; keeps loudness steady in a crossfade but starts a fade-in abruptly.
+ * sCurve: gentle start and finish.
+ */
+const FADE_SHAPES = {
+  equalPower: { rising: t => Math.sin(t * Math.PI / 2), falling: t => 1 - Math.cos(t * Math.PI / 2) },
+  sCurve: { rising: sCurve, falling: sCurve },
+};
+
+/** Builds a value curve with ~60 points per second from `valueAt(t)` for t in 0..1. */
+function buildCurve(durationSec, minPoints, valueAt) {
+  const pointCount = Math.max(minPoints, Math.ceil(durationSec * 60));
+  return Float32Array.from({ length: pointCount }, (_, i) => valueAt(i / (pointCount - 1)));
 }
 
-/** Smooth curve from `from` down to `low` at the midpoint, then back up to 1. */
+/** Curve from `from` to `to` in the given FADE_SHAPES shape. */
+function fadeCurve(from, to, durationSec, shape) {
+  const progress = FADE_SHAPES[shape][to > from ? 'rising' : 'falling'];
+  return buildCurve(durationSec, 2, t => from + (to - from) * progress(t));
+}
+
+/** S-curve from `from` down to `low` at the midpoint, then back up to 1. */
 function dipCurve(from, low, durationSec) {
-  const pointCount = Math.max(3, Math.ceil(durationSec * 60));
-  const curve = new Float32Array(pointCount);
-  const ease = t => (1 - Math.cos(t * Math.PI)) / 2;
-  for (let i = 0; i < pointCount; i++) {
-    const t = i / (pointCount - 1);
-    curve[i] = t < 0.5 ? from + (low - from) * ease(t * 2) : low + (1 - low) * ease(t * 2 - 1);
-  }
-  return curve;
+  return buildCurve(durationSec, 3, t =>
+    t < 0.5 ? from + (low - from) * sCurve(t * 2) : low + (1 - low) * sCurve(t * 2 - 1));
 }
 
-/** Ramps an AudioParam from its current value to `target`, replacing any ramp in progress. */
-function rampParam(param, target, durationSec, ctx, { equalPower = true } = {}) {
+/**
+ * Ramps an AudioParam from its current value to `target`, replacing any ramp in progress.
+ * `shape`: a FADE_SHAPES key, or 'linear'.
+ */
+function rampParam(param, target, durationSec, ctx, { shape = 'equalPower' } = {}) {
   const now = ctx.currentTime;
   const current = param.value;
   const duration = Math.max(durationSec, MIN_FADE_SEC);
   param.cancelScheduledValues(now);
   param.setValueAtTime(current, now);
-  if (equalPower) param.setValueCurveAtTime(equalPowerCurve(current, target, duration), now + 0.001, duration);
-  else param.linearRampToValueAtTime(target, now + duration);
+  if (shape === 'linear') param.linearRampToValueAtTime(target, now + duration);
+  else param.setValueCurveAtTime(fadeCurve(current, target, duration, shape), now + 0.001, duration);
 }
 
 /** Builds a tiny silent WAV object URL, used to unlock <audio> elements inside the first tap (iOS). */
@@ -110,17 +121,18 @@ class Voice {
     return this.audio.play();
   }
 
-  fadeIn(durationSec) {
+  /** Fades up to full level; `shape` is a FADE_SHAPES key. */
+  fadeIn(durationSec, shape) {
     clearTimeout(this.releaseTimer);
     this.role = 'active';
-    rampParam(this.fade.gain, 1, durationSec, this.ctx);
+    rampParam(this.fade.gain, 1, durationSec, this.ctx, { shape });
   }
 
-  /** Fades to silence, then frees the voice and calls `onReleased`. */
-  fadeOut(durationSec, onReleased) {
+  /** Fades to silence, then frees the voice and calls `onReleased`. `shape` is a FADE_SHAPES key. */
+  fadeOut(durationSec, shape, onReleased) {
     clearTimeout(this.releaseTimer);
     this.role = 'fadingOut';
-    rampParam(this.fade.gain, 0, durationSec, this.ctx);
+    rampParam(this.fade.gain, 0, durationSec, this.ctx, { shape });
     const releaseAfterMs = (Math.max(durationSec, MIN_FADE_SEC) + 0.1) * 1000;
     this.releaseTimer = setTimeout(() => { this.release(); onReleased(); }, releaseAfterMs);
   }
@@ -269,8 +281,8 @@ export class PadEngine {
 
   #applyOutputMode(durationSec) {
     const isMono = this.outputMode === 'mono';
-    rampParam(this.stereoGain.gain, isMono ? 0 : 1, durationSec, this.ctx, { equalPower: false });
-    rampParam(this.monoGain.gain, isMono ? MONO_GAIN : 0, durationSec, this.ctx, { equalPower: false });
+    rampParam(this.stereoGain.gain, isMono ? 0 : 1, durationSec, this.ctx, { shape: 'linear' });
+    rampParam(this.monoGain.gain, isMono ? MONO_GAIN : 0, durationSec, this.ctx, { shape: 'linear' });
   }
 
   /** Starts `pad` on `voice`; runs `onPlaying` once audio flows, unless superseded meanwhile. */
@@ -306,17 +318,20 @@ export class PadEngine {
     const next = this.#takeIdleVoice();
     this.#startVoice(next, current.pad, () => {
       current.audio.loop = false;
-      next.fadeIn(loopFadeSec);
-      current.fadeOut(loopFadeSec, () => this.#emitState());
+      next.fadeIn(loopFadeSec, 'equalPower'); // equal power keeps the loop point level
+      current.fadeOut(loopFadeSec, 'equalPower', () => this.#emitState());
     });
   }
 
-  /** Fades `voice` in and the others out; if another pad was playing, dips the output to mark the key change. */
+  /**
+   * Fades `voice` in and the others out on S-curves (gentle start, no jump).
+   * If another pad was playing, also dips the output to mark the key change.
+   */
   #crossfadeTo(voice, fadeSec) {
     const isKeyChange = this.voices.some(v => v !== voice && v.role === 'active');
     if (isKeyChange && fadeSec > MIN_FADE_SEC) this.#dipOutput(fadeSec);
-    voice.fadeIn(fadeSec);
-    this.#fadeOutAllExcept(voice, fadeSec);
+    voice.fadeIn(fadeSec, 'sCurve');
+    this.#fadeOutAllExcept(voice, fadeSec, { shape: 'sCurve' });
   }
 
   /** Dips output to KEY_CHANGE_DIP_GAIN at the crossfade midpoint and back, replacing any dip in progress. */
@@ -329,12 +344,15 @@ export class PadEngine {
     param.setValueCurveAtTime(dipCurve(current, KEY_CHANGE_DIP_GAIN, durationSec), now + 0.001, durationSec);
   }
 
-  /** Fades out every sounding voice except `keptVoice`. Voices already fading keep their fade unless `includeFading`. */
-  #fadeOutAllExcept(keptVoice, fadeSec, { includeFading = false } = {}) {
+  /**
+   * Fades out every sounding voice except `keptVoice`, in FADE_SHAPES `shape`.
+   * Voices already fading keep their fade unless `includeFading`.
+   */
+  #fadeOutAllExcept(keptVoice, fadeSec, { includeFading = false, shape = 'equalPower' } = {}) {
     for (const voice of this.voices) {
       if (voice === keptVoice) continue;
       if (voice.role === 'active' || (includeFading && voice.role === 'fadingOut')) {
-        voice.fadeOut(fadeSec, () => this.#emitState());
+        voice.fadeOut(fadeSec, shape, () => this.#emitState());
       }
     }
   }

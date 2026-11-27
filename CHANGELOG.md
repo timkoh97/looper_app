@@ -7,6 +7,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Nothing yet.
 
+## [0.5.0] – 2026-11-27
+
+### Changed
+
+- **Smoother fade-ins:** key changes and starting from silence now fade on an S-curve (a raised cosine) that starts and finishes gently. Before, the incoming pad jumped in at the start of its fade (about −10 dB within the first 20%).
+- **Deeper key-change dip:** −16 dB at the midpoint of the crossfade, was −10 dB.
+- Fading out the playing key and the loop crossfade are unchanged.
+
 ## [0.4.2] – 2026-11-27
 
 ### Added
@@ -97,7 +105,8 @@ First release.
 - **Pads:** 12 pads by [Arisen Worship](https://pixabay.com/users/arisen_worship-49256057), used under the Pixabay Content License. Each is a 5-minute fade-free section (1:00–6:00 of the original), cut without re-encoding, and the app evens out their loudness.
 - **Design:** flat, with no shadows or glows.
 
-[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/timkoh97/looper_app/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/timkoh97/looper_app/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/timkoh97/looper_app/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/timkoh97/looper_app/compare/v0.3.2...v0.4.0

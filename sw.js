@@ -7,7 +7,7 @@
  * Bump SHELL_CACHE's version when shipping app changes so old shells are cleared.
  */
 
-const SHELL_CACHE = 'pad-looper-shell-v11';
+const SHELL_CACHE = 'pad-looper-shell-v12';
 const PAD_CACHE = 'pad-looper-pads-v1'; // must match PAD_CACHE_NAME in js/offline.js
 
 const SHELL_FILES = [
