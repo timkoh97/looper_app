@@ -9,9 +9,9 @@ Nothing yet.
 
 ## [0.6.2] – 2026-11-27
 
-### Fixed
+### Changed
 
-- **Lock-screen artwork on iPhone:** no more white corners. The artwork is now a square, opaque copy of the icon (`icons/artwork-512.png`), which iOS rounds itself. Before, it used the rounded icon, and iOS filled the see-through corners with white.
+- **Lock-screen artwork:** now a square, opaque copy of the icon (`icons/artwork-512.png`), meant to stop iOS showing white corners around the rounded icon. On iPhone the white corners are still there, so the cause lies elsewhere; see the roadmap.
 
 ## [0.6.1] – 2026-11-27
 

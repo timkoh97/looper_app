@@ -14,6 +14,7 @@ Planned work for Pad Looper, grouped by theme. Shipped changes are recorded in [
   - Android (Chrome): works, per a tester. Still to check: rapid taps during a crossfade, now that the two-pad limit (0.4.0) is in.
   - Android (Firefox Focus): one tester reports it doesn't work. Cause unknown; reproduce and find out why.
   - iPhone with AirPods: one tester found stereo "more scratchy" than mono. Check whether mono sounds cleaner, and whether it happens at lower volume or on other headphones.
+- **White corners on the iPhone lock-screen artwork:** still there in 0.6.2, even though the artwork is now square and opaque (`icons/artwork-512.png`) and the lock screen shows our title text. Either iOS ignores Media Session artwork and falls back to a rounded site icon (`icons/icon.svg` or `icons/icon-512.png`), or it shows a stale cached image. Next step: a temporary `?arttest` build with a plain red artwork image to tell which. If red shows, fix the caching; if not, add a square, opaque fallback icon (e.g. a PNG favicon).
 - **Fixes from device testing:** fix any problems found in the tests above.
 - **Bug fixes**
 
@@ -33,4 +34,5 @@ Planned work for Pad Looper, grouped by theme. Shipped changes are recorded in [
 - **Stereo on AirPods:** reported as sounding scratchy by one tester; unconfirmed.
 - **Background playback on Android:** with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this. (It works on iPhone.)
 - **Level change at the loop point:** a few pads differ by up to about 1.7 dB between their start and end. The 8-second loop crossfade should smooth this over.
+- **Lock-screen artwork on iPhone:** shows white corners (see Testing and fixes).
 - **Other dark modes:** Samsung Internet's own dark mode and dark-mode browser extensions (such as Dark Reader) may still recolour the page.
