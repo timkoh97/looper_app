@@ -21,7 +21,7 @@ const MIN_FADE_SEC = 0.03;          // a 0 s crossfade still gets a tiny fade to
 const OUTPUT_SWITCH_SEC = 0.05;
 const VOLUME_SMOOTHING_SEC = 0.03;
 const MONO_GAIN = Math.SQRT2;       // offsets the ~3 dB drop when summing wide (uncorrelated) stereo to mono
-const KEY_CHANGE_DIP_GAIN = 0.5;    // output amplitude at the midpoint of a key-change crossfade
+const KEY_CHANGE_DIP_GAIN = 10 ** (-10 / 20); // output at the midpoint of a key-change crossfade (−10 dB)
 
 /** Equal-power curve from `from` to `to`; keeps perceived loudness steady during a crossfade. */
 function equalPowerCurve(from, to, durationSec) {
