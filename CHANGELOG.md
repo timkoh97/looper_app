@@ -7,6 +7,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Nothing yet.
 
+## [0.3.1] – 2026-11-27
+
+### Changed
+
+- **PANIC / STOP:** the STOP button is now labelled "PANIC / STOP" over two lines, to make clear it cuts all sound at once.
+- **Black-key labels:** slightly larger (13 px, was 11 px) so they're easier to read.
+
 ## [0.3.0] – 2026-11-27
 
 ### Changed
@@ -62,7 +69,8 @@ First release.
 - **Pads:** 12 pads by [Arisen Worship](https://pixabay.com/users/arisen_worship-49256057), used under the Pixabay Content License. Each is a 5-minute fade-free section (1:00–6:00 of the original), cut without re-encoding, and the app evens out their loudness.
 - **Design:** flat, with no shadows or glows.
 
-[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/timkoh97/looper_app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/timkoh97/looper_app/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/timkoh97/looper_app/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/timkoh97/looper_app/compare/v0.1.0...v0.2.0

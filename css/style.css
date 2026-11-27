@@ -81,7 +81,7 @@ button { font: inherit; color: inherit; }
 .white:last-child { border-right: none; }
 .black {
   --key-rest: var(--black-key); --key-rest-text: #ddd;
-  position: absolute; z-index: 2; background: var(--key-rest); color: var(--key-rest-text); font-size: 11px;
+  position: absolute; z-index: 2; background: var(--key-rest); color: var(--key-rest-text); font-size: 13px;
   top: 0; height: 60%; width: 8%; left: calc(var(--pos) * 100% / 7 - 4%);
   border-radius: 0 0 3px 3px;
 }
@@ -98,8 +98,8 @@ button { font: inherit; color: inherit; }
 }
 
 /* ---------- Side panel ----------
- * Landscape: volume slider gets the full height; STOP (top) and output toggle (bottom) sit at the screen edge.
- * Portrait (see media query): single column STOP → volume → output. */
+ * Landscape: volume slider gets the full height; PANIC / STOP (top) and output toggle (bottom) sit at the screen edge.
+ * Portrait (see media query): single column PANIC / STOP → volume → output. */
 .side {
   display: grid; gap: 12px;
   grid-template-columns: 76px 104px;
@@ -114,7 +114,7 @@ button { font: inherit; color: inherit; }
 .side .output-toggle { grid-area: output; }
 .panic {
   height: 72px; border: none; border-radius: 12px; cursor: pointer;
-  background: var(--danger); color: #fff; font-weight: 800; letter-spacing: 1px; font-size: 15px;
+  background: var(--danger); color: #fff; font-weight: 800; letter-spacing: 1px; font-size: 15px; line-height: 1.2;
 }
 .panic:active { filter: brightness(.8); }
 
