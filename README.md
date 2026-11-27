@@ -10,7 +10,7 @@ A web/mobile worship pad player, hosted on GitHub Pages. Tap a key (C–B) to pl
 - **Layout:** in landscape, the volume slider runs the full height of the screen, with PANIC / STOP and the stereo/mono toggle at the screen edge. In portrait, they're stacked in one column.
 - **Seamless looping:** near the end of a pad, it crossfades into a fresh copy of itself.
 - **Crossfades:** changing key crossfades between pads, with the volume dipping by 10 dB at the midpoint to mark the change. The length is set in ⚙ settings (0–20 s, default 4 s). Tapping the playing key fades it out.
-- **Two-pad limit:** while two pads are crossfading, other key taps are ignored and the key flashes red. PANIC / STOP still works.
+- **Two-pad limit:** while two pads are crossfading, other key taps are ignored and the key glows gold briefly. PANIC / STOP still works.
 - **PANIC / STOP:** cuts all sound immediately, with a 50 ms fade to avoid a click.
 - **Volume:** 0–100%. Changes only when you drag, so a stray tap can't jump it.
 - **Stereo / mono toggle:** mono combines both channels and sends the result to both speakers.
