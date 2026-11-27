@@ -99,7 +99,7 @@ button { font: inherit; color: inherit; }
   to   { background-color: var(--key-rest); color: var(--key-rest-text); }
 }
 /* Ignored tap (two pads already crossfading): gold glow fading slowly back to the key's current look */
-.key.ignored { animation: ignored-glow 1.2s ease-out; }
+.key.ignored { animation: ignored-glow .9s ease-out; }
 @keyframes ignored-glow {
   from { background-color: var(--accent); color: #000; }
 }
