@@ -6,7 +6,7 @@ import { PADS, findPad } from './pads.js';
 import { PadEngine } from './audioEngine.js';
 import { loadSettings, saveSettings } from './settings.js';
 import { registerServiceWorker, countCachedPads, downloadPads } from './offline.js';
-import { renderKeyboard, updateKeyHighlights, flashKey, createVerticalSlider, showToast } from './ui.js';
+import { renderKeyboard, updateKeyHighlights, glowKey, createVerticalSlider, showToast } from './ui.js';
 import { configureAudioSession, setScreenAwake, initMediaSession, updateMediaSession } from './mobileSupport.js';
 
 const settings = loadSettings();
@@ -55,7 +55,7 @@ function handleKeyTap(pad) {
     return;
   }
   const isAccepted = engine.toggle(pad, settings.crossfadeSec);
-  if (!isAccepted) flashKey(elements.keyboard, pad.id); // two pads already crossfading
+  if (!isAccepted) glowKey(elements.keyboard, pad.id); // two pads already crossfading
 }
 
 function handleEngineState(state) {

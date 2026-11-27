@@ -37,7 +37,7 @@ export function updateKeyHighlights(container, { activePadId, fadingPadIds }) {
 }
 
 /** Briefly glows a key gold to show its tap was ignored. */
-export function flashKey(container, padId) {
+export function glowKey(container, padId) {
   const key = container.querySelector(`.key[data-pad-id="${padId}"]`);
   if (!key) return;
   key.classList.remove('ignored');

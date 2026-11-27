@@ -4,7 +4,7 @@
 
 const STORAGE_KEY = 'padLooper.settings.v1';
 
-export const DEFAULT_SETTINGS = Object.freeze({
+const DEFAULT_SETTINGS = Object.freeze({
   crossfadeSec: 4,
   volumePercent: 75,
   outputMode: 'stereo',

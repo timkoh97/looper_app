@@ -34,14 +34,18 @@ Pads by **[Arisen Worship](https://pixabay.com/users/arisen_worship-49256057)** 
 ## Adding or replacing a pad
 
 1. Trim a 5-minute fade-free section without re-encoding. This example takes 1:00–6:00, inside the steady part of the original 10:58 files:
+
    ```sh
    ffmpeg -ss 60 -i source.mp3 -t 300 -map 0:a -c copy -map_metadata -1 pads/<id>.mp3
    ```
+
    File ids are `C Db D Eb E F Gb G Ab A Bb B`.
 2. Measure its loudness:
+
    ```sh
    ffmpeg -i pads/<id>.mp3 -af ebur128 -f null - 2>&1 | grep -A1 "Integrated loudness"
    ```
+
 3. Set `loudnessLufs` for that key in [js/pads.js](js/pads.js). Keys with `null` show as disabled.
 4. Bump `SHELL_CACHE` in [sw.js](sw.js) so installed copies pick up the change.
 
@@ -49,15 +53,30 @@ Pads by **[Arisen Worship](https://pixabay.com/users/arisen_worship-49256057)** 
 
 1. Edit [icons/icon.svg](icons/icon.svg), the source drawing.
 2. Render it at 512 px with headless Edge or Chrome. Don't render smaller sizes directly: headless windows have a minimum width of about 500 px, so smaller screenshots come out cropped.
+
    ```sh
    msedge --headless --default-background-color=00000000 --window-size=512,512 --screenshot=icons/icon-512.png icons/icon.svg
    ```
+
 3. Make the other sizes from it with ffmpeg:
+
    ```sh
    ffmpeg -i icons/icon-512.png -vf scale=192:192:flags=lanczos icons/icon-192.png
    ```
+
    For `icons/apple-touch-icon.png` (180 px), render a copy of the SVG with the background's `rx="96"` removed, so it's square, and save it without transparency (`-pix_fmt rgb24`). iOS adds its own rounded corners.
 4. Bump `SHELL_CACHE` in [sw.js](sw.js).
+
+## Releasing
+
+For each release, update these together:
+
+1. `CHANGELOG.md`: a new version section and its compare link at the bottom.
+2. The version label in [index.html](index.html) (`app-version`).
+3. `SHELL_CACHE` in [sw.js](sw.js), so installed copies pick up the change.
+4. Commit, then tag it (`git tag v<version>`) and push the tag.
+
+Design notes for a release (such as fade-curve charts) go in `docs/`, named with the version they describe.
 
 ## Running locally
 
@@ -73,9 +92,9 @@ python -m http.server 8000
 ```text
 index.html, css/style.css     UI
 js/main.js                    wiring
-js/audioEngine.js             voices, crossfades, looping, panic, stereo/mono
+js/audioEngine.js             voices, fade curves, two-pad limit, looping, panic, stereo/mono
 js/pads.js                    keys, files, loudness matching
-js/ui.js                      keyboard, vertical slider, toast
+js/ui.js                      keyboard, key highlights and glow, vertical slider, toast
 js/settings.js                localStorage settings
 js/offline.js, sw.js          offline download + service worker
 js/mobileSupport.js           wake lock, media session, iOS audio session
