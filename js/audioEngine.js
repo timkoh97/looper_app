@@ -4,10 +4,10 @@
  * Each pad streams through an <audio> element into the Web Audio graph (streaming avoids
  * holding ~100 MB of decoded audio per pad in memory on phones):
  *
- *   <audio> → trim (loudness match) → fade → dip → master (volume) ─┬→ stereoGain ─────────────→ speakers
- *                                                                   └→ monoGain (1 channel) ──→ speakers
+ *   <audio> → trim (loudness match) → fade → master (volume) ─┬→ stereoGain ─────────────→ speakers
+ *                                                             └→ monoGain (1 channel) ──→ speakers
  *
- * Features: equal-power crossfades between keys with a volume dip to mark the key change,
+ * Features: skewed S-curve crossfades between keys that dip in the middle to mark the change,
  * a two-pad limit (taps are ignored while two pads are crossfading), seamless looping by
  * crossfading a pad into a fresh copy of itself near its end, panic stop,
  * and a click-free stereo/mono switch.
@@ -22,39 +22,31 @@ const MIN_FADE_SEC = 0.03;          // a 0 s crossfade still gets a tiny fade to
 const OUTPUT_SWITCH_SEC = 0.05;
 const VOLUME_SMOOTHING_SEC = 0.03;
 const MONO_GAIN = Math.SQRT2;       // offsets the ~3 dB drop when summing wide (uncorrelated) stereo to mono
-// Dip stage gain at the midpoint of a key-change crossfade. The S-curve fades add −3 dB there
-// (two pads at half amplitude), so the total output dips to −16 dB.
-const KEY_CHANGE_DIP_GAIN = 10 ** (-13 / 20);
 
 /** Raised cosine (half a sine from −π/2 to π/2): 0 → 1 with zero slope at both ends. */
 const sCurve = t => (1 - Math.cos(t * Math.PI)) / 2;
 
+/** S-curve on squared time: stays low longer, inflection point at ~77% instead of 50%. */
+const skewedSCurve = t => sCurve(t ** 2);
+
 /**
- * Fade shapes, as progress 0 → 1 over time t 0 → 1.
+ * Fade shapes, as progress 0 → 1 over time t 0 → 1 (a falling fade's level is 1 − progress).
  * equalPower: quarter sine; keeps loudness steady in a crossfade but starts a fade-in abruptly.
  * sCurve: gentle start and finish.
+ * keyChange: skewed S-curve; the fade-out is the fade-in reversed in time, so it drops early.
+ *   Both pads are quiet mid-crossfade, dipping the total to about −14 dB to mark the key change.
  */
 const FADE_SHAPES = {
   equalPower: { rising: t => Math.sin(t * Math.PI / 2), falling: t => 1 - Math.cos(t * Math.PI / 2) },
   sCurve: { rising: sCurve, falling: sCurve },
+  keyChange: { rising: skewedSCurve, falling: t => 1 - skewedSCurve(1 - t) },
 };
 
-/** Builds a value curve with ~60 points per second from `valueAt(t)` for t in 0..1. */
-function buildCurve(durationSec, minPoints, valueAt) {
-  const pointCount = Math.max(minPoints, Math.ceil(durationSec * 60));
-  return Float32Array.from({ length: pointCount }, (_, i) => valueAt(i / (pointCount - 1)));
-}
-
-/** Curve from `from` to `to` in the given FADE_SHAPES shape. */
+/** Value curve (~60 points per second) from `from` to `to` in the given FADE_SHAPES shape. */
 function fadeCurve(from, to, durationSec, shape) {
   const progress = FADE_SHAPES[shape][to > from ? 'rising' : 'falling'];
-  return buildCurve(durationSec, 2, t => from + (to - from) * progress(t));
-}
-
-/** S-curve from `from` down to `low` at the midpoint, then back up to 1. */
-function dipCurve(from, low, durationSec) {
-  return buildCurve(durationSec, 3, t =>
-    t < 0.5 ? from + (low - from) * sCurve(t * 2) : low + (1 - low) * sCurve(t * 2 - 1));
+  const pointCount = Math.max(2, Math.ceil(durationSec * 60));
+  return Float32Array.from({ length: pointCount }, (_, i) => from + (to - from) * progress(i / (pointCount - 1)));
 }
 
 /**
@@ -253,9 +245,7 @@ export class PadEngine {
 
   #buildGraph() {
     const ctx = this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    this.dip = ctx.createGain();
     this.master = ctx.createGain();
-    this.dip.connect(this.master);
     this.stereoGain = ctx.createGain();
     this.monoGain = ctx.createGain();
     Object.assign(this.monoGain, { channelCount: 1, channelCountMode: 'explicit', channelInterpretation: 'speakers' });
@@ -265,7 +255,7 @@ export class PadEngine {
     this.#applyOutputMode(0);
 
     const silentUrl = createSilentWavUrl();
-    this.voices = Array.from({ length: VOICE_COUNT }, () => new Voice(ctx, this.dip, silentUrl));
+    this.voices = Array.from({ length: VOICE_COUNT }, () => new Voice(ctx, this.master, silentUrl));
     this.voices.forEach(voice => voice.prime());
     setInterval(() => this.#checkLoop(), LOOP_CHECK_MS);
     document.addEventListener('visibilitychange', () => {
@@ -324,24 +314,14 @@ export class PadEngine {
   }
 
   /**
-   * Fades `voice` in and the others out on S-curves (gentle start, no jump).
-   * If another pad was playing, also dips the output to mark the key change.
+   * Fades `voice` in and the others out. A key change uses the skewed keyChange curves, which
+   * dip in the middle; starting from silence uses a plain S-curve (gentle start, no jump).
    */
   #crossfadeTo(voice, fadeSec) {
     const isKeyChange = this.voices.some(v => v !== voice && v.role === 'active');
-    if (isKeyChange && fadeSec > MIN_FADE_SEC) this.#dipOutput(fadeSec);
-    voice.fadeIn(fadeSec, 'sCurve');
-    this.#fadeOutAllExcept(voice, fadeSec, { shape: 'sCurve' });
-  }
-
-  /** Dips output to KEY_CHANGE_DIP_GAIN at the crossfade midpoint and back, replacing any dip in progress. */
-  #dipOutput(durationSec) {
-    const param = this.dip.gain;
-    const now = this.ctx.currentTime;
-    const current = param.value;
-    param.cancelScheduledValues(now);
-    param.setValueAtTime(current, now);
-    param.setValueCurveAtTime(dipCurve(current, KEY_CHANGE_DIP_GAIN, durationSec), now + 0.001, durationSec);
+    const shape = isKeyChange ? 'keyChange' : 'sCurve';
+    voice.fadeIn(fadeSec, shape);
+    this.#fadeOutAllExcept(voice, fadeSec, { shape });
   }
 
   /**

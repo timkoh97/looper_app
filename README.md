@@ -9,7 +9,7 @@ A web/mobile worship pad player, hosted on GitHub Pages. Tap a key (C–B) to pl
 - **12 keys**, played on a piano-style keyboard. On a phone held upright, the keyboard is turned 90° anticlockwise.
 - **Layout:** in landscape, the volume slider runs the full height of the screen, with PANIC / STOP and the stereo/mono toggle at the screen edge. In portrait, they're stacked in one column.
 - **Seamless looping:** near the end of a pad, it crossfades into a fresh copy of itself.
-- **Crossfades:** changing key crossfades between pads on gentle S-curves, with the volume dipping by 16 dB at the midpoint to mark the change. Starting from silence also fades in on an S-curve. The length is set in ⚙ settings (0–20 s, default 4 s). Tapping the playing key fades it out.
+- **Crossfades:** changing key crossfades between pads on skewed S-curves: the old pad drops away early and the new one arrives late, so the sound dips by about 14 dB mid-crossfade to mark the change. Starting from silence fades in on a plain S-curve. The length is set in ⚙ settings (0–20 s, default 4 s). Tapping the playing key fades it out.
 - **Two-pad limit:** while two pads are crossfading, other key taps are ignored and the key glows gold briefly. PANIC / STOP still works.
 - **PANIC / STOP:** cuts all sound immediately, with a 50 ms fade to avoid a click.
 - **Volume:** 0–100%. Changes only when you drag, so a stray tap can't jump it.
@@ -82,7 +82,7 @@ js/mobileSupport.js           wake lock, media session, iOS audio session
 manifest.webmanifest          home-screen install settings
 icons/                        app icons (icon.svg is the source; PNGs are made from it)
 pads/*.mp3                    pad audio (256 kbps stereo, 5:00)
-docs/                         design references, e.g. fade-curves-v0.5.0 (.html interactive, .png static)
+docs/                         design references, e.g. fade-curves-v0.6.0 (.html interactive, .png static)
 CHANGELOG.md                  version history
 ROADMAP.md                    planned work and known limitations
 LICENSE                       CC BY-NC-SA 4.0 (pads excluded)
