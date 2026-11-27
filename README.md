@@ -82,6 +82,7 @@ js/mobileSupport.js           wake lock, media session, iOS audio session
 manifest.webmanifest          home-screen install settings
 icons/                        app icons (icon.svg is the source; PNGs are made from it)
 pads/*.mp3                    pad audio (256 kbps stereo, 5:00)
+docs/                         design references, e.g. fade-curves-v0.5.0 (.html interactive, .png static)
 CHANGELOG.md                  version history
 ROADMAP.md                    planned work and known limitations
 LICENSE                       CC BY-NC-SA 4.0 (pads excluded)
