@@ -52,7 +52,8 @@ export function updateMediaSession(padLabel) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: `${padLabel} pad`,
       artist: 'Pad Looper · pads by Arisen Worship',
-      artwork: [{ src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' }],
+      // Square and opaque: iOS rounds the corners itself and shows transparency as white.
+      artwork: [{ src: 'icons/artwork-512.png', sizes: '512x512', type: 'image/png' }],
     });
   }
 }

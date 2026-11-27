@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Nothing yet.
 
+## [0.6.2] – 2026-11-27
+
+### Fixed
+
+- **Lock-screen artwork on iPhone:** no more white corners. The artwork is now a square, opaque copy of the icon (`icons/artwork-512.png`), which iOS rounds itself. Before, it used the rounded icon, and iOS filled the see-through corners with white.
+
 ## [0.6.1] – 2026-11-27
 
 ### Changed
@@ -121,7 +127,8 @@ First release.
 - **Pads:** 12 pads by [Arisen Worship](https://pixabay.com/users/arisen_worship-49256057), used under the Pixabay Content License. Each is a 5-minute fade-free section (1:00–6:00 of the original), cut without re-encoding, and the app evens out their loudness.
 - **Design:** flat, with no shadows or glows.
 
-[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/timkoh97/looper_app/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/timkoh97/looper_app/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/timkoh97/looper_app/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/timkoh97/looper_app/compare/v0.4.2...v0.5.0

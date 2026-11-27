@@ -65,6 +65,8 @@ Pads by **[Arisen Worship](https://pixabay.com/users/arisen_worship-49256057)** 
    ```
 
    For `icons/apple-touch-icon.png` (180 px), render a copy of the SVG with the background's `rx="96"` removed, so it's square, and save it without transparency (`-pix_fmt rgb24`). iOS adds its own rounded corners.
+
+   Make `icons/artwork-512.png` (lock-screen artwork) the same way at 512 px: square and without transparency, or iOS shows white corners.
 4. Bump `SHELL_CACHE` in [sw.js](sw.js).
 
 ## Releasing

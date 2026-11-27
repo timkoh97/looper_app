@@ -7,7 +7,7 @@
  * Bump SHELL_CACHE's version when shipping app changes so old shells are cleared.
  */
 
-const SHELL_CACHE = 'pad-looper-shell-v15';
+const SHELL_CACHE = 'pad-looper-shell-v16';
 const PAD_CACHE = 'pad-looper-pads-v1'; // must match PAD_CACHE_NAME in js/offline.js
 
 const SHELL_FILES = [
@@ -26,6 +26,7 @@ const SHELL_FILES = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
+  'icons/artwork-512.png',
 ];
 
 self.addEventListener('install', event => {
