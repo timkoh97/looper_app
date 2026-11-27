@@ -3,31 +3,6 @@
 All notable changes to Pad Looper are recorded here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## Future updates
-
-Planned work, roughly in priority order. Move items into a release section when they ship.
-
-### Planned
-
-- **Remaining device testing:**
-  - iPhone (Safari): crossfades and lock-screen playback both work (tested 2026-11-23). Still to check:
-    - the loop join at the 5-minute mark
-    - playing with the silent switch on
-    - offline mode after **⚙ → Download for offline**, including in airplane mode
-  - Android (Chrome): not tested yet. Check crossfades, the loop join, lock-screen playback and offline mode.
-- **Fixes from device testing:** fix any problems found in the tests above.
-- **Visual updates**
-- **Bug fixes**
-- **My own generated pads**
-- **Different versions of pads, e.g. warm, shimmery**
-
-### Known limitations
-
-- **Partly tested on phones:** tested on iPhone (Safari) and desktop Edge only. The loop join hasn't yet been heard on a real device.
-- **Background playback on Android:** with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this. (It works on iPhone.)
-- **Volume dip at the loop point:** a few pads differ by up to about 1.7 dB between their start and end. The 8-second loop crossfade should smooth this over.
-- **Other dark modes:** Samsung Internet's own dark mode and dark-mode browser extensions (such as Dark Reader) may still recolour the page.
-
 ## [Unreleased]
 
 Nothing yet.
