@@ -36,6 +36,16 @@ export function updateKeyHighlights(container, { activePadId, fadingPadIds }) {
   }
 }
 
+/** Briefly flashes a key to show its tap was ignored. */
+export function flashKey(container, padId) {
+  const key = container.querySelector(`.key[data-pad-id="${padId}"]`);
+  if (!key) return;
+  key.classList.remove('rejected');
+  void key.offsetWidth; // restart the animation on repeated taps
+  key.classList.add('rejected');
+  key.addEventListener('animationend', () => key.classList.remove('rejected'), { once: true });
+}
+
 /**
  * Turns `element` into a vertical 0–100 slider.
  * Dragging moves the value relative to where it was (a stray tap never jumps the volume).

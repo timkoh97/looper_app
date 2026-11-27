@@ -96,6 +96,11 @@ button { font: inherit; color: inherit; }
   from { background-color: var(--accent-dim); color: #000; }
   to   { background-color: var(--key-rest); color: var(--key-rest-text); }
 }
+/* Ignored tap (two pads already crossfading): brief red flash back to the key's current look */
+.key.rejected { animation: reject-flash .35s ease-out; }
+@keyframes reject-flash {
+  from { background-color: var(--danger); color: #fff; }
+}
 
 /* ---------- Side panel ----------
  * Landscape: volume slider gets the full height; PANIC / STOP (top) and output toggle (bottom) sit at the screen edge.

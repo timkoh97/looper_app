@@ -8,7 +8,8 @@
  *                                                                   └→ monoGain (1 channel) ──→ speakers
  *
  * Features: equal-power crossfades between keys with a volume dip to mark the key change,
- * seamless looping by crossfading a pad into a fresh copy of itself near its end, panic stop,
+ * a two-pad limit (taps are ignored while two pads are crossfading), seamless looping by
+ * crossfading a pad into a fresh copy of itself near its end, panic stop,
  * and a click-free stereo/mono switch.
  */
 
@@ -167,14 +168,29 @@ export class PadEngine {
     if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {});
   }
 
-  /** Tapping the active pad fades it out; any other pad crossfades in. */
-  toggle(pad, fadeSec) {
-    if (pad.id === this.activePadId) this.stop(fadeSec);
-    else this.play(pad, fadeSec);
+  /**
+   * True while two different pads are sounding (one loading or fading in, one fading out).
+   * Voices are counted per pad, so a loop crossfade (one pad twice) never counts as busy.
+   */
+  get isBusy() {
+    const soundingPadIds = new Set(this.voices.filter(v => !v.isIdle).map(v => v.pad.id));
+    return soundingPadIds.size >= 2;
   }
 
-  /** Crossfades from whatever is playing to `pad`. */
+  /**
+   * Tapping the active pad fades it out; any other pad crossfades in.
+   * Ignored while busy. Returns false if ignored.
+   */
+  toggle(pad, fadeSec) {
+    if (this.isBusy) return false;
+    if (pad.id === this.activePadId) this.stop(fadeSec);
+    else this.play(pad, fadeSec);
+    return true;
+  }
+
+  /** Crossfades from whatever is playing to `pad`. Ignored while busy. Returns false if ignored. */
   play(pad, fadeSec) {
+    if (this.isBusy) return false;
     this.unlock();
     this.#releaseStartingVoices();
     this.activePadId = pad.id;
@@ -185,13 +201,14 @@ export class PadEngine {
     if (fadingVoice) {
       this.#crossfadeTo(fadingVoice, fadeSec);
       this.#emitState();
-      return;
+      return true;
     }
 
     // Otherwise start a fresh voice; the outgoing pad keeps sounding until the new one is playing.
     const voice = this.#takeIdleVoice();
     this.#startVoice(voice, pad, () => this.#crossfadeTo(voice, fadeSec));
     this.#emitState();
+    return true;
   }
 
   /** Fades everything out over `fadeSec`. */

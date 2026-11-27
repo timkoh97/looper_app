@@ -7,6 +7,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Nothing yet.
 
+## [0.4.0] – 2026-11-27
+
+### Added
+
+- **Two-pad limit:** only two pads can sound at once, one fading in (or loading) and one fading out. Key taps during that time are ignored, including the two keys involved, and the tapped key flashes red. Taps work again once the fade-out ends. PANIC / STOP and the loop crossfade are unaffected.
+
+### Fixed
+
+- **Rapid taps:** tapping several keys within the crossfade time could leave the wrong pad playing (reported on Android Chrome). The two-pad limit prevents this. The root cause isn't confirmed; the likely cause is Android limiting how many audio players can start at once.
+
 ## [0.3.2] – 2026-11-27
 
 ### Changed
@@ -75,7 +85,8 @@ First release.
 - **Pads:** 12 pads by [Arisen Worship](https://pixabay.com/users/arisen_worship-49256057), used under the Pixabay Content License. Each is a 5-minute fade-free section (1:00–6:00 of the original), cut without re-encoding, and the app evens out their loudness.
 - **Design:** flat, with no shadows or glows.
 
-[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/timkoh97/looper_app/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/timkoh97/looper_app/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/timkoh97/looper_app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/timkoh97/looper_app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/timkoh97/looper_app/compare/v0.2.1...v0.3.0
