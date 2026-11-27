@@ -4,11 +4,12 @@
  * Each pad streams through an <audio> element into the Web Audio graph (streaming avoids
  * holding ~100 MB of decoded audio per pad in memory on phones):
  *
- *   <audio> → trim (loudness match) → fade → master (volume) ─┬→ stereoGain ─────────────→ speakers
- *                                                             └→ monoGain (1 channel) ──→ speakers
+ *   <audio> → trim (loudness match) → fade → dip → master (volume) ─┬→ stereoGain ─────────────→ speakers
+ *                                                                   └→ monoGain (1 channel) ──→ speakers
  *
- * Features: equal-power crossfades between keys, seamless looping by crossfading a pad into
- * a fresh copy of itself near its end, panic stop, and a click-free stereo/mono switch.
+ * Features: equal-power crossfades between keys with a volume dip to mark the key change,
+ * seamless looping by crossfading a pad into a fresh copy of itself near its end, panic stop,
+ * and a click-free stereo/mono switch.
  */
 
 const VOICE_COUNT = 6;              // enough for a key crossfade overlapping a loop crossfade, plus rapid taps
@@ -20,6 +21,7 @@ const MIN_FADE_SEC = 0.03;          // a 0 s crossfade still gets a tiny fade to
 const OUTPUT_SWITCH_SEC = 0.05;
 const VOLUME_SMOOTHING_SEC = 0.03;
 const MONO_GAIN = Math.SQRT2;       // offsets the ~3 dB drop when summing wide (uncorrelated) stereo to mono
+const KEY_CHANGE_DIP_GAIN = 0.5;    // output amplitude at the midpoint of a key-change crossfade
 
 /** Equal-power curve from `from` to `to`; keeps perceived loudness steady during a crossfade. */
 function equalPowerCurve(from, to, durationSec) {
@@ -30,6 +32,18 @@ function equalPowerCurve(from, to, durationSec) {
     const t = i / (pointCount - 1);
     const shape = isRising ? Math.sin(t * Math.PI / 2) : 1 - Math.cos(t * Math.PI / 2);
     curve[i] = from + (to - from) * shape;
+  }
+  return curve;
+}
+
+/** Smooth curve from `from` down to `low` at the midpoint, then back up to 1. */
+function dipCurve(from, low, durationSec) {
+  const pointCount = Math.max(3, Math.ceil(durationSec * 60));
+  const curve = new Float32Array(pointCount);
+  const ease = t => (1 - Math.cos(t * Math.PI)) / 2;
+  for (let i = 0; i < pointCount; i++) {
+    const t = i / (pointCount - 1);
+    curve[i] = t < 0.5 ? from + (low - from) * ease(t * 2) : low + (1 - low) * ease(t * 2 - 1);
   }
   return curve;
 }
@@ -169,18 +183,14 @@ export class PadEngine {
     const fadingVoice = this.voices.find(v =>
       v.role === 'fadingOut' && v.pad.id === pad.id && v.secondsLeft > LOOP_CROSSFADE_SEC * 2);
     if (fadingVoice) {
-      fadingVoice.fadeIn(fadeSec);
-      this.#fadeOutAllExcept(fadingVoice, fadeSec);
+      this.#crossfadeTo(fadingVoice, fadeSec);
       this.#emitState();
       return;
     }
 
     // Otherwise start a fresh voice; the outgoing pad keeps sounding until the new one is playing.
     const voice = this.#takeIdleVoice();
-    this.#startVoice(voice, pad, () => {
-      voice.fadeIn(fadeSec);
-      this.#fadeOutAllExcept(voice, fadeSec);
-    });
+    this.#startVoice(voice, pad, () => this.#crossfadeTo(voice, fadeSec));
     this.#emitState();
   }
 
@@ -214,7 +224,9 @@ export class PadEngine {
 
   #buildGraph() {
     const ctx = this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    this.dip = ctx.createGain();
     this.master = ctx.createGain();
+    this.dip.connect(this.master);
     this.stereoGain = ctx.createGain();
     this.monoGain = ctx.createGain();
     Object.assign(this.monoGain, { channelCount: 1, channelCountMode: 'explicit', channelInterpretation: 'speakers' });
@@ -224,7 +236,7 @@ export class PadEngine {
     this.#applyOutputMode(0);
 
     const silentUrl = createSilentWavUrl();
-    this.voices = Array.from({ length: VOICE_COUNT }, () => new Voice(ctx, this.master, silentUrl));
+    this.voices = Array.from({ length: VOICE_COUNT }, () => new Voice(ctx, this.dip, silentUrl));
     this.voices.forEach(voice => voice.prime());
     setInterval(() => this.#checkLoop(), LOOP_CHECK_MS);
     document.addEventListener('visibilitychange', () => {
@@ -280,6 +292,24 @@ export class PadEngine {
       next.fadeIn(loopFadeSec);
       current.fadeOut(loopFadeSec, () => this.#emitState());
     });
+  }
+
+  /** Fades `voice` in and the others out; if another pad was playing, dips the output to mark the key change. */
+  #crossfadeTo(voice, fadeSec) {
+    const isKeyChange = this.voices.some(v => v !== voice && v.role === 'active');
+    if (isKeyChange && fadeSec > MIN_FADE_SEC) this.#dipOutput(fadeSec);
+    voice.fadeIn(fadeSec);
+    this.#fadeOutAllExcept(voice, fadeSec);
+  }
+
+  /** Dips output to KEY_CHANGE_DIP_GAIN at the crossfade midpoint and back, replacing any dip in progress. */
+  #dipOutput(durationSec) {
+    const param = this.dip.gain;
+    const now = this.ctx.currentTime;
+    const current = param.value;
+    param.cancelScheduledValues(now);
+    param.setValueAtTime(current, now);
+    param.setValueCurveAtTime(dipCurve(current, KEY_CHANGE_DIP_GAIN, durationSec), now + 0.001, durationSec);
   }
 
   /** Fades out every sounding voice except `keptVoice`. Voices already fading keep their fade unless `includeFading`. */
