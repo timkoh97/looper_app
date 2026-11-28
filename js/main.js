@@ -7,7 +7,7 @@ import { PadEngine } from './audioEngine.js';
 import { loadSettings, saveSettings } from './settings.js';
 import { registerServiceWorker, countCachedPads, downloadPads } from './offline.js';
 import { renderKeyboard, updateKeyHighlights, glowKey, createVerticalSlider, showToast } from './ui.js';
-import { configureAudioSession, setScreenAwake, initMediaSession, updateMediaSession, IS_ART_TEST } from './mobileSupport.js';
+import { configureAudioSession, setScreenAwake, initMediaSession, updateMediaSession } from './mobileSupport.js';
 
 const settings = loadSettings();
 const availablePadFiles = PADS.filter(pad => pad.isAvailable).map(pad => pad.file);
@@ -136,4 +136,3 @@ engine.setOutputMode(settings.outputMode);
 wireControls();
 renderSettings();
 registerServiceWorker();
-if (IS_ART_TEST) showToast('Art test: lock-screen artwork is a red square'); // TEMP diagnostic
