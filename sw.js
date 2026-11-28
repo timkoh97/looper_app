@@ -7,7 +7,7 @@
  * Bump SHELL_CACHE's version when shipping app changes so old shells are cleared.
  */
 
-const SHELL_CACHE = 'pad-looper-shell-v19';
+const SHELL_CACHE = 'pad-looper-shell-v20';
 const PAD_CACHE = 'pad-looper-pads-v1'; // must match PAD_CACHE_NAME in js/offline.js
 
 const SHELL_FILES = [
@@ -30,7 +30,10 @@ const SHELL_FILES = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(SHELL_CACHE).then(cache => cache.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' bypasses the browser's HTTP cache (GitHub Pages allows 10 min), so a new
+  // version never mixes fresh and stale files, e.g. a new main.js with an old module it imports.
+  const requests = SHELL_FILES.map(file => new Request(file, { cache: 'reload' }));
+  event.waitUntil(caches.open(SHELL_CACHE).then(cache => cache.addAll(requests)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', event => {
@@ -56,7 +59,9 @@ async function serveShell(event) {
   const cache = await caches.open(SHELL_CACHE);
   const cached = await cache.match(request, { ignoreSearch: true })
     || (request.mode === 'navigate' ? await cache.match('./') : undefined);
-  const refresh = fetch(request)
+  // 'no-cache' revalidates with the server instead of trusting the HTTP cache. A new Request is
+  // built from the URL because navigation requests can't be copied with options.
+  const refresh = fetch(new Request(request.url, { cache: 'no-cache' }))
     .then(response => {
       if (response.ok) cache.put(request, response.clone());
       return response;
