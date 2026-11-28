@@ -10,12 +10,14 @@ Ask testers to report the version shown after the title (e.g. v0.6.3).
 
 | Platform | Browser | Plays & crossfades | Rapid taps | Loop join (5:00) | Lock screen / background | Offline | Notes |
 |---|---|---|---|---|---|---|---|
-| iPhone | Safari | ✓ 0.6.x | – | – | ✓ | ✓ incl. airplane mode | Plays with the silent switch on ✓ (0.6.x) |
+| iPhone | Safari | ✓ 0.6.x | ✓ | ✓ (G only) | ✓ | ✓ incl. airplane mode | Plays with the silent switch on ✓ (0.6.x) |
 | iPhone | Chrome | – | – | – | – | – | Uses Safari's engine (WebKit), like all iPhone browsers |
-| iPhone | Firefox / Focus | – | – | – | – | – | WebKit; Focus clears data on close, so offline won't persist |
+| iPhone | Firefox | – | – | – | – | – | WebKit |
+| iPhone | Firefox Focus | – | – | – | – | – | WebKit; clears data on close, so offline won't persist |
 | iPhone | Edge | – | – | – | – | – | WebKit |
 | Android | Chrome | ✓ (tester) | – | – | – | – | |
-| Android | Firefox / Focus | ✗ (tester) | – | – | – | – | Reported not working; cause unknown, reproduce |
+| Android | Firefox | – | – | – | – | – | Test to see whether the Focus failure is Firefox in general |
+| Android | Firefox Focus | ✗ (tester) | – | – | – | – | Reported not working; cause unknown, reproduce. Clears data on close |
 | Android | Edge | – | – | – | – | – | |
 | Windows | Chrome | – | – | – | – | – | |
 | Windows | Firefox | – | – | – | – | – | |
@@ -44,6 +46,12 @@ Ask testers to report the version shown after the title (e.g. v0.6.3).
 
 - **My own generated pads**
 - **Different versions of pads, e.g. warm, shimmery**
+
+## Future app
+
+Pad Looper is a proof of concept for a future native app (iOS / iPadOS, possibly Android). Ideas for that app, not this project:
+
+- **Lock-screen controls that drive the pad:** play/pause and key name on the lock screen and in Control Centre, controlling the pad engine itself. In this web version, iOS treats the underlying audio file as a 5-minute track, and its play button only works some of the time, because Safari ties the controls to one of several audio elements the engine crossfades between. A native app would own the controls directly (iOS: `MPRemoteCommandCenter` and `MPNowPlayingInfoCenter`; Android: `MediaSession`).
 
 ## Known limitations
 
