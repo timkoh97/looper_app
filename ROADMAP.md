@@ -55,7 +55,7 @@ Pad Looper is a proof of concept for a future native app (iOS / iPadOS, possibly
 
 ## Known limitations
 
-- **Partly tested:** see the device testing table. The loop join hasn't yet been heard on a real device.
+- **Partly tested:** see the device testing table. The loop join has only been heard on one pad (G, iPhone Safari).
 - **Firefox Focus (Android):** reported not working by one tester; unconfirmed.
 - **Stereo on AirPods:** reported as sounding scratchy by one tester; unconfirmed.
 - **Background playback on Android:** with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this. (It works on iPhone.)
