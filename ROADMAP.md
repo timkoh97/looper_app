@@ -4,16 +4,35 @@ Planned work for Pad Looper, grouped by theme. Shipped changes are recorded in [
 
 ## Testing and fixes
 
-- **Remaining device testing:**
-  - Ask testers to report the version shown after the title (e.g. v0.6.0).
-  - iPhone (Safari): crossfades and lock-screen playback both worked in 0.2.1 (tested 2026-11-23). Still to check:
-    - the 0.6.0 crossfade curves
-    - the loop join at the 5-minute mark
-    - playing with the silent switch on
-    - offline mode after **⚙ → Download for offline**, including in airplane mode
-  - Android (Chrome): works, per a tester. Still to check: rapid taps during a crossfade, now that the two-pad limit (0.4.0) is in.
-  - Android (Firefox Focus): one tester reports it doesn't work. Cause unknown; reproduce and find out why.
-  - iPhone with AirPods: one tester found stereo "more scratchy" than mono. Check whether mono sounds cleaner, and whether it happens at lower volume or on other headphones.
+Ask testers to report the version shown after the title (e.g. v0.6.3).
+
+### Device testing
+
+| Platform | Browser | Plays & crossfades | Rapid taps | Loop join (5:00) | Lock screen / background | Offline | Notes |
+|---|---|---|---|---|---|---|---|
+| iPhone | Safari | ✓ 0.6.x | – | – | ✓ | ✓ incl. airplane mode | Plays with the silent switch on ✓ (0.6.x) |
+| iPhone | Chrome | – | – | – | – | – | Uses Safari's engine (WebKit), like all iPhone browsers |
+| iPhone | Firefox / Focus | – | – | – | – | – | WebKit; Focus clears data on close, so offline won't persist |
+| iPhone | Edge | – | – | – | – | – | WebKit |
+| Android | Chrome | ✓ (tester) | – | – | – | – | |
+| Android | Firefox / Focus | ✗ (tester) | – | – | – | – | Reported not working; cause unknown, reproduce |
+| Android | Edge | – | – | – | – | – | |
+| Windows | Chrome | – | – | – | – | – | |
+| Windows | Firefox | – | – | – | – | – | |
+| Windows | Edge | ✓ | – | – | – | – | |
+| Mac | Safari | – | – | – | – | – | |
+| Mac | Chrome | – | – | – | – | – | |
+| Mac | Firefox | – | – | – | – | – | |
+| Mac | Edge | – | – | – | – | – | |
+
+✓ works · ✗ fails · – not tested yet. **Rapid taps:** tap several keys during a crossfade; the third should be ignored with a gold glow (two-pad limit, 0.4.0). **Loop join:** let a pad play past 5:00 and listen for a gap or jump.
+
+### Other checks
+
+- **iPhone with AirPods:** one tester found stereo "more scratchy" than mono. Check whether mono sounds cleaner, and whether it happens at lower volume or on other headphones.
+
+### Fixes
+
 - **Fixes from device testing:** fix any problems found in the tests above.
 - **Bug fixes**
 
@@ -28,7 +47,7 @@ Planned work for Pad Looper, grouped by theme. Shipped changes are recorded in [
 
 ## Known limitations
 
-- **Partly tested on phones:** tested on iPhone (Safari), Android (Chrome) and desktop Edge. The loop join hasn't yet been heard on a real device.
+- **Partly tested:** see the device testing table. The loop join hasn't yet been heard on a real device.
 - **Firefox Focus (Android):** reported not working by one tester; unconfirmed.
 - **Stereo on AirPods:** reported as sounding scratchy by one tester; unconfirmed.
 - **Background playback on Android:** with battery saver on, pads may stop when the screen locks. Keeping the screen awake and showing lock-screen controls should prevent this. (It works on iPhone.)
