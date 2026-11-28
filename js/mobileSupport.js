@@ -44,6 +44,10 @@ export function initMediaSession({ onPlay, onPause, onStop }) {
   }
 }
 
+// TEMP diagnostic (?arttest): plain red artwork, to see whether iOS uses Media Session artwork at all.
+export const IS_ART_TEST = new URLSearchParams(location.search).has('arttest');
+const ARTWORK_SRC = IS_ART_TEST ? 'icons/arttest-red.png' : 'icons/artwork-512.png';
+
 /** Updates the lock-screen title and play state. */
 export function updateMediaSession(padLabel) {
   if (!('mediaSession' in navigator)) return;
@@ -53,7 +57,7 @@ export function updateMediaSession(padLabel) {
       title: `${padLabel} pad`,
       artist: 'Pad Looper · pads by Arisen Worship',
       // Square and opaque: iOS rounds the corners itself and shows transparency as white.
-      artwork: [{ src: 'icons/artwork-512.png', sizes: '512x512', type: 'image/png' }],
+      artwork: [{ src: ARTWORK_SRC, sizes: '512x512', type: 'image/png' }],
     });
   }
 }
